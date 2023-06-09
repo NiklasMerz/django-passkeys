@@ -60,7 +60,7 @@ var GetAssertReq = (getAssert) => {
 
         });
     $(document).ready(function () {
-        if (location.protocol != 'https:') {
+        if (!window.isSecureContext) {
             console.error("Passkeys must work under secure context")
         }
     });
