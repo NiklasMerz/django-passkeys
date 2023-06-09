@@ -6,6 +6,7 @@ from django.conf import settings
 from django.http import JsonResponse
 from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
+from django.contrib.auth.models import User
 from fido2.server import Fido2Server
 from fido2.utils import websafe_decode, websafe_encode
 from fido2.webauthn import PublicKeyCredentialRpEntity, AttestedCredentialData, RegistrationResponse
@@ -105,7 +106,8 @@ def auth_begin(request):
     if request.user.is_authenticated:
         username = request.user.username
     if username:
-        credentials = getUserCredentials(request.session.get("base_username", request.user.username))
+        user = User.objects.get(username=request.session.get("base_username", request.user.username))
+        credentials = getUserCredentials(user)
     auth_data, state = server.authenticate_begin(credentials)
     request.session['fido2_state'] = state
     return JsonResponse(dict(auth_data))
